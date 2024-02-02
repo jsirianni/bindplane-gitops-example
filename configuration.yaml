@@ -1,0 +1,30 @@
+apiVersion: bindplane.observiq.com/v1
+kind: Configuration
+metadata:
+    id: k8s-node
+    name: k8s-node
+    labels:
+        platform: kubernetes-daemonset
+spec:
+    contentType: ""
+    measurementInterval: ""
+    sources:
+        - id: 01HNNAW5MDVQHASWVBYR998FRQ
+          type: k8s_kubelet
+          parameters:
+            - name: cluster_name
+              value: minikube
+            - name: metric_groups
+              value:
+                - node
+                - pod
+                - container
+                - volume
+            - name: collection_interval
+              value: 60
+    destinations:
+        - id: 01HNNAW5MG75752NGHXJZV0C53
+          name: bindplane-gateway-agent
+    selector:
+        matchLabels:
+            configuration: k8s-node
