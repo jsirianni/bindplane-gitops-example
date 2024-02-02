@@ -21,7 +21,7 @@ spec:
                 - container
                 - volume
             - name: collection_interval
-              value: 60
+              value: 30
     destinations:
         - id: 01HNNAW5MG75752NGHXJZV0C53
           name: bindplane-gateway-agent
