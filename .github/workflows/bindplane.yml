@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: observIQ/bindplane-op-action@main
+      - uses: observIQ/bindplane-op-action@write-back-branch
         with:
           bindplane_remote_url: ${{ secrets.BINDPLANE_REMOTE_URL }}
           bindplane_api_key: ${{ secrets.BINDPLANE_API_KEY }}
@@ -35,3 +35,4 @@ jobs:
           configuration_output_dir: otel/
           token: ${{ secrets.GITHUB_TOKEN }}
           enable_auto_rollout: true
+          configuration_output_branch: raw
