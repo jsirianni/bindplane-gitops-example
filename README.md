@@ -1,1 +1,0 @@
-# bindplane-gitops-example
