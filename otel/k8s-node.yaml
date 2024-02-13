@@ -1,0 +1,44 @@
+# This configuration is managed by BindPlane OP.
+# Configuration: k8s-node:5
+receivers:
+    kubeletstats/source0_01HNNAW5MDVQHASWVBYR998FRQ:
+        auth_type: serviceAccount
+        collection_interval: 30s
+        endpoint: ${KUBE_NODE_NAME}:10250
+        insecure_skip_verify: true
+        metric_groups:
+            - node
+            - pod
+            - container
+            - volume
+processors:
+    batch/bindplane-gateway-agent: null
+    resource/source0_01HNNAW5MDVQHASWVBYR998FRQ:
+        attributes:
+            - action: insert
+              key: k8s.cluster.name
+              value: minikube
+            - action: insert
+              key: k8s.node.name
+              value: ${KUBE_NODE_NAME}
+exporters:
+    otlp/bindplane-gateway-agent:
+        compression: gzip
+        endpoint: bindplane-gateway-agent.bindplane-agent.svc.cluster.local:4317
+        retry_on_failure:
+            enabled: false
+        sending_queue:
+            enabled: false
+        tls:
+            insecure: true
+service:
+    pipelines:
+        metrics/source0_01HNNAW5MDVQHASWVBYR998FRQ__bindplane-gateway-agent-0:
+            receivers:
+                - kubeletstats/source0_01HNNAW5MDVQHASWVBYR998FRQ
+            processors:
+                - resource/source0_01HNNAW5MDVQHASWVBYR998FRQ
+                - batch/bindplane-gateway-agent
+            exporters:
+                - otlp/bindplane-gateway-agent
+
