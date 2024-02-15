@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: observIQ/bindplane-op-action@write-back-branch
+      - uses: observIQ/bindplane-op-action@v1.1.0
         with:
           bindplane_remote_url: ${{ secrets.BINDPLANE_REMOTE_URL }}
           bindplane_api_key: ${{ secrets.BINDPLANE_API_KEY }}
