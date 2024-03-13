@@ -31,6 +31,8 @@ jobs:
           target_branch: main
           destination_path: destination.yaml
           configuration_path: configuration.yaml
+          source_path: source.yaml
+          processor_path: processor.yaml
           enable_otel_config_write_back: true
           configuration_output_dir: otel/
           token: ${{ secrets.GITHUB_TOKEN }}

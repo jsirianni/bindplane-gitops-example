@@ -1,0 +1,19 @@
+---
+apiVersion: bindplane.observiq.com/v1
+kind: Processor
+metadata:
+    id: 01HRW4HPKGP11BEKG12QM204QV
+    name: system-detection
+spec:
+    type: resource_detection
+    parameters:
+        - name: detector
+          value: system
+        - name: system_hostname_source
+          value: os
+        - name: override
+          value: false
+        - name: timeout
+          value: 2s
+status:
+    latest: true

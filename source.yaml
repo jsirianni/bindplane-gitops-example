@@ -1,0 +1,40 @@
+---
+apiVersion: bindplane.observiq.com/v1
+kind: Source
+metadata:
+    id: 01HNNATH37W1KRRSPSVX095YXX
+    name: OTLP
+spec:
+    type: otlp
+    parameters:
+        - name: telemetry_types
+          value:
+            - Metrics
+            - Logs
+            - Traces
+        - name: listen_address
+          value: 0.0.0.0
+        - name: grpc_port
+          value: 4317
+        - name: http_port
+          value: 4318
+        - name: enable_tls
+          value: false
+        - name: cert_file
+          value: ""
+        - name: key_file
+          value: ""
+        - name: mutual_tls
+          value: false
+        - name: ca_file
+          value: ""
+        - name: enable_grpc_timeout
+          value: true
+        - name: grpc_max_connection_idle
+          value: 60
+        - name: grpc_max_connection_age
+          value: 60
+        - name: grpc_max_connection_age_grace
+          value: 300
+status:
+    latest: true
