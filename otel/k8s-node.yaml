@@ -1,7 +1,7 @@
 # This configuration is managed by BindPlane OP.
-# Configuration: k8s-node:7
+# Configuration: k8s-node:9
 receivers:
-    kubeletstats/source0_01HNNAW5MDVQHASWVBYR998FRQ:
+    kubeletstats/source1_01HMS8ERRSFYE4KGQVQ8DQC5X0:
         auth_type: serviceAccount
         collection_interval: 30s
         endpoint: ${KUBE_NODE_NAME}:10250
@@ -11,20 +11,45 @@ receivers:
             - pod
             - container
             - volume
+    plugin/source0_01HMS8ERRSFYE4KGQVQ2ZXXDZK__container:
+        parameters:
+            body_json_parsing: true
+            exclude_file_log_path:
+                - /var/log/containers/observiq-*-collector-*
+                - /var/log/containers/bindplane-*-agent-*
+            log_paths:
+                - /var/log/containers/*.log
+            log_source: file
+            start_at: end
+        path: $OIQ_OTEL_COLLECTOR_HOME/plugins/container_logs.yaml
 processors:
     batch/bindplane-gateway-agent: null
-    resource/source0_01HNNAW5MDVQHASWVBYR998FRQ:
+    resource/source0_01HMS8ERRSFYE4KGQVQ2ZXXDZK:
         attributes:
             - action: insert
               key: k8s.cluster.name
-              value: minikube
+              value: stage2
             - action: insert
               key: k8s.node.name
               value: ${KUBE_NODE_NAME}
+    resource/source1_01HMS8ERRSFYE4KGQVQ8DQC5X0:
+        attributes:
+            - action: insert
+              key: k8s.cluster.name
+              value: stage2
+            - action: insert
+              key: k8s.node.name
+              value: ${KUBE_NODE_NAME}
+    transform/add-fields__logs:
+        error_mode: ignore
+        log_statements:
+            - context: log
+              statements:
+                - set(resource.attributes["x"], "y") where true
 exporters:
     otlp/bindplane-gateway-agent:
         compression: gzip
-        endpoint: bindplane-gateway-agent.bindplane-agent.svc.cluster.local:4317
+        endpoint: bindplane-gateway-agent.bindplane-agent.svc.cluster.local:44317
         retry_on_failure:
             enabled: false
         sending_queue:
@@ -33,11 +58,20 @@ exporters:
             insecure: true
 service:
     pipelines:
-        metrics/source0_01HNNAW5MDVQHASWVBYR998FRQ__bindplane-gateway-agent-0:
+        logs/source0_01HMS8ERRSFYE4KGQVQ2ZXXDZK__bindplane-gateway-agent-0:
             receivers:
-                - kubeletstats/source0_01HNNAW5MDVQHASWVBYR998FRQ
+                - plugin/source0_01HMS8ERRSFYE4KGQVQ2ZXXDZK__container
             processors:
-                - resource/source0_01HNNAW5MDVQHASWVBYR998FRQ
+                - resource/source0_01HMS8ERRSFYE4KGQVQ2ZXXDZK
+                - transform/add-fields__logs
+                - batch/bindplane-gateway-agent
+            exporters:
+                - otlp/bindplane-gateway-agent
+        metrics/source1_01HMS8ERRSFYE4KGQVQ8DQC5X0__bindplane-gateway-agent-0:
+            receivers:
+                - kubeletstats/source1_01HMS8ERRSFYE4KGQVQ8DQC5X0
+            processors:
+                - resource/source1_01HMS8ERRSFYE4KGQVQ8DQC5X0
                 - batch/bindplane-gateway-agent
             exporters:
                 - otlp/bindplane-gateway-agent

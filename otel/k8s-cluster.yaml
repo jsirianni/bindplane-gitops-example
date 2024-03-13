@@ -1,0 +1,62 @@
+# This configuration is managed by BindPlane OP.
+# Configuration: k8s-cluster:8
+receivers:
+    k8s_cluster/source0_01HMS8GVNVFVD5TSWTKSJR1RY5:
+        allocatable_types_to_report:
+            - cpu
+            - memory
+            - ephemeral-storage
+            - storage
+        auth_type: serviceAccount
+        collection_interval: 30s
+        distribution: kubernetes
+        node_conditions_to_report:
+            - Ready
+            - DiskPressure
+            - PIDPressure
+    k8s_events/k8s-cluster-events:
+        auth_type: serviceAccount
+        namespaces:
+            - kube-system
+            - production
+processors:
+    batch/bindplane-gateway-agent: null
+    resource/k8s-cluster-events:
+        attributes:
+            - action: insert
+              key: k8s.cluster.name
+              value: stage2
+    resource/source0_01HMS8GVNVFVD5TSWTKSJR1RY5:
+        attributes:
+            - action: insert
+              key: k8s.cluster.name
+              value: stage4
+exporters:
+    otlp/bindplane-gateway-agent:
+        compression: gzip
+        endpoint: bindplane-gateway-agent.bindplane-agent.svc.cluster.local:44317
+        retry_on_failure:
+            enabled: false
+        sending_queue:
+            enabled: false
+        tls:
+            insecure: true
+service:
+    pipelines:
+        logs/k8s-cluster-events_01HMS8GVNVFVD5TSWTKVNZS2JC__bindplane-gateway-agent-0:
+            receivers:
+                - k8s_events/k8s-cluster-events
+            processors:
+                - resource/k8s-cluster-events
+                - batch/bindplane-gateway-agent
+            exporters:
+                - otlp/bindplane-gateway-agent
+        metrics/source0_01HMS8GVNVFVD5TSWTKSJR1RY5__bindplane-gateway-agent-0:
+            receivers:
+                - k8s_cluster/source0_01HMS8GVNVFVD5TSWTKSJR1RY5
+            processors:
+                - resource/source0_01HMS8GVNVFVD5TSWTKSJR1RY5
+                - batch/bindplane-gateway-agent
+            exporters:
+                - otlp/bindplane-gateway-agent
+

@@ -1,7 +1,7 @@
 # This configuration is managed by BindPlane OP.
-# Configuration: k8s-gateway:1
+# Configuration: k8s-gateway:6
 receivers:
-    otlp/source0_01HNNATH37W1KRRSPSVX095YXX:
+    otlp/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5:
         protocols:
             grpc:
                 endpoint: 0.0.0.0:4317
@@ -14,26 +14,139 @@ receivers:
                         timeout: 20s
             http:
                 endpoint: 0.0.0.0:4318
+processors:
+    resourcedetection/coralogix:
+        detectors:
+            - system
+        override: false
+        system:
+            hostname_sources:
+                - os
+    resourcedetection/system-detection:
+        detectors:
+            - system
+        override: false
+        system:
+            hostname_sources:
+                - os
+        timeout: 2s
 exporters:
-    logging/logging: null
+    coralogix/coralogix__logs:
+        application_name: bindplane-test
+        logs:
+            compression: gzip
+            endpoint: otel-logs.coralogix.us:443
+        private_key: (sensitive)
+        retry_on_failure:
+            enabled: false
+        sending_queue:
+            enabled: false
+        subsystem_name: test
+        timeout: 5s
+    coralogix/coralogix__metrics:
+        application_name: bindplane-test
+        metrics:
+            compression: gzip
+            endpoint: otel-metrics.coralogix.us:443
+        private_key: (sensitive)
+        retry_on_failure:
+            enabled: false
+        sending_queue:
+            enabled: false
+        subsystem_name: test
+        timeout: 5s
+    coralogix/coralogix__traces:
+        application_name: bindplane-test
+        private_key: (sensitive)
+        retry_on_failure:
+            enabled: false
+        sending_queue:
+            enabled: false
+        subsystem_name: test
+        timeout: 5s
+        traces:
+            compression: gzip
+            endpoint: otel-traces.coralogix.us:443
+    elasticsearch/elasticsearch-internal__logs:
+        endpoints:
+            - https://es-0.corp.net:9200
+            - https://es-1.corp.net:9200
+        logs_index: logs-generic-default
+        num_workers: 0
+        pipeline: null
+        retry:
+            enabled: false
+        sending_queue:
+            enabled: false
+        tls: null
+    elasticsearch/elasticsearch-internal__traces:
+        endpoints:
+            - https://es-0.corp.net:9200
+            - https://es-1.corp.net:9200
+        num_workers: 0
+        pipeline: null
+        retry:
+            enabled: false
+        sending_queue:
+            enabled: false
+        tls: null
+        traces_index: traces-generic-default
+    prometheusremotewrite/prometheus-internal:
+        add_metric_suffixes: true
+        compression: gzip
+        endpoint: http://prom-prod.corp.net:9009/api/v1/write
+        resource_to_telemetry_conversion:
+            enabled: true
+        retry_on_failure:
+            enabled: true
+            initial_interval: 5s
+            max_elapsed_time: 300s
+            max_interval: 30s
 service:
     pipelines:
-        logs/source0_01HNNATH37W1KRRSPSVX095YXX__logging-0:
+        logs/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5__coralogix-0:
             receivers:
-                - otlp/source0_01HNNATH37W1KRRSPSVX095YXX
-            processors: []
+                - otlp/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5
+            processors:
+                - resourcedetection/system-detection
+                - resourcedetection/coralogix
             exporters:
-                - logging/logging
-        metrics/source0_01HNNATH37W1KRRSPSVX095YXX__logging-0:
+                - coralogix/coralogix__logs
+        logs/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5__elasticsearch-internal-1:
             receivers:
-                - otlp/source0_01HNNATH37W1KRRSPSVX095YXX
-            processors: []
+                - otlp/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5
+            processors:
+                - resourcedetection/system-detection
             exporters:
-                - logging/logging
-        traces/source0_01HNNATH37W1KRRSPSVX095YXX__logging-0:
+                - elasticsearch/elasticsearch-internal__logs
+        metrics/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5__coralogix-0:
             receivers:
-                - otlp/source0_01HNNATH37W1KRRSPSVX095YXX
-            processors: []
+                - otlp/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5
+            processors:
+                - resourcedetection/system-detection
+                - resourcedetection/coralogix
             exporters:
-                - logging/logging
+                - coralogix/coralogix__metrics
+        metrics/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5__prometheus-internal-2:
+            receivers:
+                - otlp/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5
+            processors:
+                - resourcedetection/system-detection
+            exporters:
+                - prometheusremotewrite/prometheus-internal
+        traces/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5__coralogix-0:
+            receivers:
+                - otlp/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5
+            processors:
+                - resourcedetection/system-detection
+                - resourcedetection/coralogix
+            exporters:
+                - coralogix/coralogix__traces
+        traces/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5__elasticsearch-internal-1:
+            receivers:
+                - otlp/source0_01HMS8J2WPEVAX0RSCPW4ZNWT5
+            processors:
+                - resourcedetection/system-detection
+            exporters:
+                - elasticsearch/elasticsearch-internal__traces
 
