@@ -11,7 +11,7 @@ spec:
         - name: displayName
           value: Production events
         - name: cluster_name
-          value: stage2
+          value: stage20
         - name: namespaces
           value:
             - kube-system
