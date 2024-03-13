@@ -1,5 +1,5 @@
 # This configuration is managed by BindPlane OP.
-# Configuration: k8s-node:9
+# Configuration: k8s-node:11
 receivers:
     kubeletstats/source1_01HMS8ERRSFYE4KGQVQ8DQC5X0:
         auth_type: serviceAccount
@@ -49,7 +49,7 @@ processors:
 exporters:
     otlp/bindplane-gateway-agent:
         compression: gzip
-        endpoint: bindplane-gateway-agent.bindplane-agent.svc.cluster.local:44317
+        endpoint: bindplane-gateway-agent.bindplane-agent.svc.cluster.local:4317
         retry_on_failure:
             enabled: false
         sending_queue:

@@ -1,5 +1,5 @@
 # This configuration is managed by BindPlane OP.
-# Configuration: k8s-cluster:8
+# Configuration: k8s-cluster:9
 receivers:
     k8s_cluster/source0_01HMS8GVNVFVD5TSWTKSJR1RY5:
         allocatable_types_to_report:
@@ -34,7 +34,7 @@ processors:
 exporters:
     otlp/bindplane-gateway-agent:
         compression: gzip
-        endpoint: bindplane-gateway-agent.bindplane-agent.svc.cluster.local:44317
+        endpoint: bindplane-gateway-agent.bindplane-agent.svc.cluster.local:4317
         retry_on_failure:
             enabled: false
         sending_queue:
