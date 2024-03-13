@@ -1,5 +1,5 @@
 # This configuration is managed by BindPlane OP.
-# Configuration: k8s-node:6
+# Configuration: k8s-node:7
 receivers:
     kubeletstats/source0_01HNNAW5MDVQHASWVBYR998FRQ:
         auth_type: serviceAccount
