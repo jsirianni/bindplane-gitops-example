@@ -2,39 +2,47 @@
 apiVersion: bindplane.observiq.com/v1
 kind: Source
 metadata:
-    id: 01HNNATH37W1KRRSPSVX095YXX
-    name: OTLP
+    id: 01HMS8GVNVFVD5TSWTKVNZS2JC
+    name: k8s-cluster-events
+    displayName: Production events
 spec:
-    type: otlp
+    type: k8s_events
     parameters:
-        - name: telemetry_types
+        - name: displayName
+          value: Production events
+        - name: cluster_name
+          value: stage2
+        - name: namespaces
           value:
-            - Metrics
-            - Logs
-            - Traces
-        - name: listen_address
-          value: 0.0.0.0
-        - name: grpc_port
-          value: 4317
-        - name: http_port
-          value: 4318
-        - name: enable_tls
-          value: false
-        - name: cert_file
-          value: ""
-        - name: key_file
-          value: ""
-        - name: mutual_tls
-          value: false
-        - name: ca_file
-          value: ""
-        - name: enable_grpc_timeout
-          value: true
-        - name: grpc_max_connection_idle
-          value: 60
-        - name: grpc_max_connection_age
-          value: 60
-        - name: grpc_max_connection_age_grace
-          value: 300
+            - kube-system
+            - production
+status:
+    latest: true
+---
+apiVersion: bindplane.observiq.com/v1
+kind: Source
+metadata:
+    id: 01HMS8GVNVFVD5TSWTKSJR1RY5
+    name: k8s-cluster-metrics
+spec:
+    type: k8s_cluster
+    parameters:
+        - name: cluster_name
+          value: stage4
+        - name: node_conditions_to_report
+          value:
+            - Ready
+            - DiskPressure
+            - PIDPressure
+        - name: allocatable_types_to_report
+          value:
+            - cpu
+            - memory
+            - ephemeral-storage
+            - storage
+        - name: collection_interval
+          value: 30
+        - name: distribution
+          value: kubernetes
 status:
     latest: true

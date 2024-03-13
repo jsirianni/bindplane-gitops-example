@@ -2,7 +2,47 @@
 apiVersion: bindplane.observiq.com/v1
 kind: Processor
 metadata:
-    id: 01HRW4HPKGP11BEKG12QM204QV
+    id: 01HRW6C1S7X9ZENT5DEYYWY9MK
+    name: add-fields
+spec:
+    type: add_fields
+    parameters:
+        - name: enable_logs
+          value: true
+        - name: log_condition
+          value: "true"
+        - name: log_resource_attributes
+          value:
+            x: "y"
+        - name: log_resource_action
+          value: upsert
+        - name: log_attributes_action
+          value: upsert
+        - name: log_body_action
+          value: upsert
+        - name: enable_metrics
+          value: false
+        - name: datapoint_condition
+          value: "true"
+        - name: metric_resource_action
+          value: upsert
+        - name: metric_attributes_action
+          value: upsert
+        - name: enable_traces
+          value: false
+        - name: span_condition
+          value: "true"
+        - name: traces_resource_action
+          value: upsert
+        - name: traces_attributes_action
+          value: upsert
+status:
+    latest: true
+---
+apiVersion: bindplane.observiq.com/v1
+kind: Processor
+metadata:
+    id: 01HRW6A8SQFBSMF3JZCX3B6X7Q
     name: system-detection
 spec:
     type: resource_detection
