@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: observIQ/bindplane-op-action@support-resources
+      - uses: observIQ/bindplane-op-action@apply-sources-processors
         with:
           bindplane_remote_url: ${{ secrets.BINDPLANE_REMOTE_URL }}
           bindplane_api_key: ${{ secrets.BINDPLANE_API_KEY }}
