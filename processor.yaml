@@ -13,7 +13,7 @@ spec:
           value: "true"
         - name: log_resource_attributes
           value:
-            x: "y"
+            x: "b"
         - name: log_resource_action
           value: upsert
         - name: log_attributes_action
