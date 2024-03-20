@@ -1,5 +1,5 @@
 # This configuration is managed by BindPlane OP.
-# Configuration: k8s-node:12
+# Configuration: k8s-node:13
 receivers:
     kubeletstats/source1_01HMS8ERRSFYE4KGQVQ8DQC5X0:
         auth_type: serviceAccount
@@ -45,7 +45,7 @@ processors:
         log_statements:
             - context: log
               statements:
-                - set(resource.attributes["x"], "y") where true
+                - set(resource.attributes["x"], "b") where true
 exporters:
     otlp/bindplane-gateway-agent:
         compression: gzip
