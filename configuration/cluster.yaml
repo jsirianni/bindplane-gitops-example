@@ -1,0 +1,58 @@
+---
+apiVersion: bindplane.observiq.com/v1
+kind: Configuration
+metadata:
+    id: k8s-cluster
+    name: k8s-cluster
+    labels:
+        platform: kubernetes-deployment
+spec:
+    contentType: ""
+    measurementInterval: ""
+    sources:
+        - id: 01HMS8GVNVFVD5TSWTKSJR1RY5
+          type: k8s_cluster
+          parameters:
+            - name: cluster_name
+              value: stage4
+            - name: node_conditions_to_report
+              value:
+                - Ready
+                - DiskPressure
+                - PIDPressure
+            - name: allocatable_types_to_report
+              value:
+                - cpu
+                - memory
+                - ephemeral-storage
+                - storage
+            - name: collection_interval
+              value: 30
+            - name: distribution
+              value: kubernetes
+        - id: 01HMS8GVNVFVD5TSWTKVNZS2JC
+          name: k8s-cluster-events
+          displayName: Production events
+    destinations:
+        - id: 01HMS8GVNVFVD5TSWTKZZNHB8R
+          name: bindplane-gateway-agent
+          processors:
+            - id: 01HRW6BE45V2XN2NZJSW11TD87
+              type: delete_empty_values
+              parameters:
+                - name: telemetry_types
+                  value: []
+                - name: deleted_values
+                  value:
+                    - Null Values
+                - name: exclude_resource_keys
+                  value: []
+                - name: exclude_attribute_keys
+                  value: []
+                - name: exclude_body_keys
+                  value: []
+                - name: empty_string_values
+                  value: []
+    selector:
+        matchLabels:
+            configuration: k8s-cluster

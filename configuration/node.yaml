@@ -1,0 +1,52 @@
+---
+apiVersion: bindplane.observiq.com/v1
+kind: Configuration
+metadata:
+    id: k8s-node
+    name: k8s-node
+    labels:
+        platform: kubernetes-daemonset
+spec:
+    contentType: ""
+    measurementInterval: ""
+    sources:
+        - id: 01HMS8ERRSFYE4KGQVQ2ZXXDZK
+          type: k8s_container
+          parameters:
+            - name: cluster_name
+              value: stage2
+            - name: log_source
+              value: file
+            - name: file_path
+              value:
+                - /var/log/containers/*.log
+            - name: exclude_file_path
+              value:
+                - /var/log/containers/observiq-*-collector-*
+                - /var/log/containers/bindplane-*-agent-*
+            - name: journald_path
+              value: ""
+            - name: start_at
+              value: end
+        - id: 01HMS8ERRSFYE4KGQVQ8DQC5X0
+          type: k8s_kubelet
+          parameters:
+            - name: cluster_name
+              value: stage2
+            - name: metric_groups
+              value:
+                - node
+                - pod
+                - container
+                - volume
+            - name: collection_interval
+              value: 30
+    destinations:
+        - id: 01HMS8HBK216AD6V30GKX968XK
+          name: bindplane-gateway-agent
+          processors:
+            - id: 01HRW6C3J5GGDREZVF1CNW9JAV
+              name: add-fields
+    selector:
+        matchLabels:
+            configuration: k8s-node
